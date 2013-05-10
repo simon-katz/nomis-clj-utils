@@ -7,6 +7,59 @@
   (some #{item} coll))
 
 ;;;; ___________________________________________________________________________
+;;;; ---- submap? ----
+
+(defn submap? [m1 m2]
+  (clojure.set/subset? (set m1) (set m2)))
+
+;;;; ___________________________________________________________________________
+;;;; ---- position ----
+;;;; ---- positions ----
+
+;;;; From http://stackoverflow.com/questions/4830900
+
+(defn ^:private indexed
+  "Returns a lazy sequence of [index, item] pairs, where items come
+  from 's' and indexes count up from zero.
+
+  (indexed '(a b c d))  =>  ([0 a] [1 b] [2 c] [3 d])"
+  [s]
+  (map vector (iterate inc 0) s))
+
+(defn positions
+  "Returns a lazy sequence containing the positions at which pred
+   is true for items in coll."
+  [pred coll]
+  (for [[idx elt] (indexed coll) :when (pred elt)] idx))
+
+(defn position
+  [pred coll]
+  (first (positions pred coll)))
+
+;;;; ___________________________________________________________________________
+;;;; ---- last-index-of-char-in-string ----
+
+(defn last-index-of-char-in-string [^Character char ^String string]
+  ;; Effect of type hints:
+  ;;   Without:
+  ;;     (time (dotimes [i 1000000] (last-index-of-char-in-string \c "abcdef")))
+  ;;     "Elapsed time: 2564.688 msecs"
+  ;;   With:
+  ;;     (time (dotimes [i 1000000] (last-index-of-char-in-string \c "abcdef")))
+  ;;     "Elapsed time: 18.44 msecs"
+  (.lastIndexOf string (int char)))
+
+;;;; ___________________________________________________________________________
+;;;; ---- do1 ----
+
+(defmacro do1
+  ;; Copied from http://en.wikibooks.org/wiki/Clojure_Programming/Concepts.
+  [first-form & other-forms]
+  `(let [x# ~first-form]
+     ~@other-forms
+     x#))
+
+;;;; ___________________________________________________________________________
 ;;;; ---- def-cyclic-printers ----
 
 (defmacro def-cyclic-printers
