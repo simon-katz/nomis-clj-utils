@@ -1,4 +1,4 @@
-(ns com.nomistech.clj-utils)
+(ns com.nomistech.clojure-utils)
 
 ;;;; ___________________________________________________________________________
 ;;;; ---- member? ----
