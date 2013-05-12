@@ -1,4 +1,5 @@
-(ns com.nomistech.clojure-utils)
+(ns com.nomistech.clojure-utils
+  (require [clojure.set]))
 
 ;;;; ___________________________________________________________________________
 ;;;; ---- member? ----
@@ -71,7 +72,7 @@
   circular structures. When an instance is encountered while it is
   already being printed a special token is printed
   instead of getting into an endless loop."
-  [type]
+  [^clojure.lang.Symbol type]
   `(do
 
      (defn print-fun# [~'v] (into {} ~'v))
