@@ -1,5 +1,6 @@
 (ns com.nomistech.clojure-utils
-  (require [clojure.set]))
+  (require [clojure.set]
+           [clojure.pprint]))
 
 ;;;; ___________________________________________________________________________
 ;;;; ---- member? ----
