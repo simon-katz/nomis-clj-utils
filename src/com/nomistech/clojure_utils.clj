@@ -104,3 +104,41 @@
          (clojure.pprint/write text-for-cyclic-printing#)
          (binding [*being-printed?*# (conj *being-printed?*# ~'v)]
            (clojure.pprint/pprint (print-fun# ~'v)))))))
+
+;;;; ___________________________________________________________________________
+;;;; ---- import-vars ----
+
+(defn import-vars*
+  "Experimental.
+  For each symbol sym in syms:
+  - If, in ns, sym names a var that holds a function or macro definition,
+    create a public mapping in the current namespace from sym to the var.
+  - If, in ns, sym names a var that holds some other value,
+    create a public mapping in the current namespace from sym to the value.
+  Each created var has the same metadata as the var that was used to create
+  it except that the :ns key is mapped to this namespace instead of the
+  original namespace and there is an :original-ns key that is mapped to
+  the original namespace.
+  Inspired by Overtone's overtone.helpers.ns/immigrate."
+  [ns syms]
+  (doseq [sym syms]
+    (let [var (ns-resolve ns sym)
+          new-sym (with-meta sym (assoc (meta var) :original-ns ns))]
+      (intern *ns* new-sym (if (fn? (var-get var))
+                             var
+                             (var-get var))))))
+
+(defmacro import-vars
+  "Experimental.
+  For each symbol sym in syms:
+  - If, in ns, sym names a var that holds a function or macro definition,
+    create a public mapping in the current namespace from sym to the var.
+  - If, in ns, sym names a var that holds some other value,
+    create a public mapping in the current namespace from sym to the value.
+  Each created var has the same metadata as the var that was used to create
+  it except that the :ns key is mapped to this namespace instead of the
+  original namespace and there is an :original-ns key that is mapped to
+  the original namespace.
+  Inspired by Overtone's overtone.helpers.ns/immigrate."
+  [ns syms]
+  `(import-vars* '~ns '~syms))
