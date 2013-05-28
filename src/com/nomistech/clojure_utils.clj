@@ -110,6 +110,7 @@
 
 (defn import-vars*
   "Experimental.
+  ns is a symbol.
   For each symbol sym in syms:
   - If, in ns, sym names a var that holds a function or macro definition,
     create a public mapping in the current namespace from sym to the var.
@@ -122,7 +123,10 @@
   Inspired by Overtone's overtone.helpers.ns/immigrate."
   [ns syms]
   (doseq [sym syms]
-    (let [var (ns-resolve ns sym)
+    (let [var (do
+                ;; this roundabout approach handles namespace aliases,
+                ;; but a simple (ns-resolve ns sym) does not
+                (resolve (symbol (str (name ns) "/" (name sym)))))
           new-sym (with-meta sym (assoc (meta var) :original-ns ns))]
       (intern *ns* new-sym (if (fn? (var-get var))
                              var
@@ -130,6 +134,7 @@
 
 (defmacro import-vars
   "Experimental.
+  ns is a symbol.
   For each symbol sym in syms:
   - If, in ns, sym names a var that holds a function or macro definition,
     create a public mapping in the current namespace from sym to the var.
