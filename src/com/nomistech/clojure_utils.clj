@@ -133,17 +133,6 @@
                              (var-get var))))))
 
 (defmacro import-vars
-  "Experimental.
-  ns is a symbol.
-  For each symbol sym in syms:
-  - If, in ns, sym names a var that holds a function or macro definition,
-    create a public mapping in the current namespace from sym to the var.
-  - If, in ns, sym names a var that holds some other value,
-    create a public mapping in the current namespace from sym to the value.
-  Each created var has the same metadata as the var that was used to create
-  it except that the :ns key is mapped to this namespace instead of the
-  original namespace and there is an :original-ns key that is mapped to
-  the original namespace.
-  Inspired by Overtone's overtone.helpers.ns/immigrate."
+  "A macro that wraps `import-vars*`."
   [ns syms]
   `(import-vars* '~ns '~syms))
